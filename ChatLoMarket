@@ -1,0 +1,34 @@
+<context>
+    <input pattern="(Hola) *">
+        <!-- Greet the user if we know his/her name -->
+        <output value="Hola $UserName!" if="full($UserName)"/>
+
+        <!-- Or activate an inner context to ask the user about his/her name -->
+        <context if="empty($UserName)" modal="true"> <!-- We use a modal context, so our bot will recognize any text as the user’s name -->
+            <output value="Hola! Cual es tu nombre ?"/>
+
+            <input pattern="$Text">
+                <!-- Store the user’s name in the UserName variable with "user" scope to save it into database -->
+                <var name="UserName" value="$Text" scope="user"/>
+                <output value="Gusto de conocerte, $UserName!"/> <!-- Using the placeholder in output -->
+            </input>
+        </context>
+    </input>
+</context>
+<context>
+  <input pattern="* (Clima|Pronostico) * [$Date] *">
+
+    <!-- If we don’t know where is our user from, we need to ask about that -->
+    <context if="empty($UserCity)">
+      <output value="Donde vives ?"/>
+      <input pattern="$City">
+        <context id="weather"/> <!-- Jump to the "weather" context now -->
+      </input>
+    </context>
+
+    <context id="weather">
+      <!-- Does some weather gathering stuff -->
+    </context>
+  </input>
+</context>
+
